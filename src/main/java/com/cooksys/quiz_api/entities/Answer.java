@@ -16,9 +16,9 @@ public class Answer {
 
   @Id
   @GeneratedValue
-  private Long ansId;
+  private Long id;
 
-  private String ansText;
+  private String text;
 
   private boolean correct = false;
 
