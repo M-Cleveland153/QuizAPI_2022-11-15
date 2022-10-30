@@ -7,8 +7,12 @@ import lombok.NoArgsConstructor;
 @Data
 public class AnswerResponseDto {
 
-  private Long id;
+//  private Long ansId;
 
-  private String text;
+	private String ansText;
+
+	private boolean correct;
+	
+//	private QuestionTextRespDto quesText;
 
 }
