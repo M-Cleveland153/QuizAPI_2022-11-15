@@ -1,10 +1,12 @@
 package com.cooksys.quiz_api.services.impl;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.stereotype.Service;
 
+import com.cooksys.quiz_api.dtos.QuestionRequestDto;
 import com.cooksys.quiz_api.dtos.QuestionResponseDto;
 import com.cooksys.quiz_api.dtos.QuizRequestDto;
 import com.cooksys.quiz_api.dtos.QuizResponseDto;
@@ -13,6 +15,7 @@ import com.cooksys.quiz_api.entities.Question;
 import com.cooksys.quiz_api.entities.Quiz;
 import com.cooksys.quiz_api.mappers.QuestionMapper;
 import com.cooksys.quiz_api.mappers.QuizMapper;
+import com.cooksys.quiz_api.repositories.QuestionRepository;
 import com.cooksys.quiz_api.repositories.QuizRepository;
 import com.cooksys.quiz_api.services.QuizService;
 
@@ -24,7 +27,15 @@ public class QuizServiceImpl implements QuizService {
 
 	private final QuizRepository quizRepository;
 	private final QuizMapper quizMapper;
+	private final QuestionRepository questionRepository;
 	private final QuestionMapper questionMapper;
+	
+	private Quiz getQuiz(Long id) {
+		Optional<Quiz> optionalQuiz = quizRepository.findById(id);
+		// exception logic goes here
+		
+		return optionalQuiz.get();
+	}
 
 	@Override
 	public List<QuizResponseDto> getAllQuizzes() {
@@ -58,5 +69,21 @@ public class QuizServiceImpl implements QuizService {
 		quizRepository.delete(quiz);
 		return quizMapper.entityToDto(quiz);
 	}
+
+	@Override  //id is the Quiz id
+	public QuizResponseDto addQuestion(Long id, QuestionRequestDto questionRequestDto) {
+		Quiz quizToUpdate = getQuiz(id);
+//		Question questionToAdd = questionRepository.saveAndFlush(questionMapper.questionRequestDtoToEntity(questionRequestDto));
+//		quizToUpdate.getQuestions().add(questionToAdd);
+		Question questionToAdd = questionMapper.questionRequestDtoToEntity(questionRequestDto);
+		for(Answer answer: questionToAdd.getAnswers()) {
+			answer.setQuestion(questionToAdd);
+		}
+		questionToAdd.setQuiz(quizToUpdate);
+		quizToUpdate.getQuestions().add(questionToAdd);
+		return quizMapper.entityToDto(quizRepository.saveAndFlush(quizToUpdate));
+	}
+	
+	
 
 }
