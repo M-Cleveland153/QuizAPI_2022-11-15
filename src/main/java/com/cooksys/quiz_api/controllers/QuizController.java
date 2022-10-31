@@ -48,7 +48,11 @@ public class QuizController {
   }
   
   
-  // PATCH QUIZ/{ID}/RENAME/{newName}
+  //COMPLETE!! PATCH QUIZ/{ID}/RENAME/{newName}
+  @PatchMapping("/{id}/rename/{newName}")
+  public QuizResponseDto renameQuiz(@PathVariable Long id, @PathVariable String newName){
+	  return quizService.renameQuiz(id, newName);
+  }
   
   
   
@@ -73,6 +77,7 @@ public class QuizController {
   
   
   // DELETE QUIZ/ {ID} /DELETE/{QUESTION ID}
+//  @DeleteMapping QuestionResponseDto deleteQuestion(@PathVariable Long id, )
   
   
 

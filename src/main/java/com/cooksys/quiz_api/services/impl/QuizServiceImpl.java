@@ -73,14 +73,19 @@ public class QuizServiceImpl implements QuizService {
 	@Override  //id is the Quiz id
 	public QuizResponseDto addQuestion(Long id, QuestionRequestDto questionRequestDto) {
 		Quiz quizToUpdate = getQuiz(id);
-//		Question questionToAdd = questionRepository.saveAndFlush(questionMapper.questionRequestDtoToEntity(questionRequestDto));
-//		quizToUpdate.getQuestions().add(questionToAdd);
 		Question questionToAdd = questionMapper.questionRequestDtoToEntity(questionRequestDto);
 		for(Answer answer: questionToAdd.getAnswers()) {
 			answer.setQuestion(questionToAdd);
 		}
 		questionToAdd.setQuiz(quizToUpdate);
 		quizToUpdate.getQuestions().add(questionToAdd);
+		return quizMapper.entityToDto(quizRepository.saveAndFlush(quizToUpdate));
+	}
+
+	@Override
+	public QuizResponseDto renameQuiz(Long id, String newName) {
+		Quiz quizToUpdate = quizRepository.getById(id);
+		quizToUpdate.setName(newName);
 		return quizMapper.entityToDto(quizRepository.saveAndFlush(quizToUpdate));
 	}
 	

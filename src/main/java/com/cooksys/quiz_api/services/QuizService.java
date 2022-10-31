@@ -20,4 +20,6 @@ public interface QuizService {
 
 	QuizResponseDto addQuestion(Long id, QuestionRequestDto questionRequestDto);
 
+	QuizResponseDto renameQuiz(Long id, String newName);
+
 }
