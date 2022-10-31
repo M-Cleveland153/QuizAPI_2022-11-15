@@ -15,6 +15,7 @@ import com.cooksys.quiz_api.entities.Question;
 import com.cooksys.quiz_api.entities.Quiz;
 import com.cooksys.quiz_api.mappers.QuestionMapper;
 import com.cooksys.quiz_api.mappers.QuizMapper;
+import com.cooksys.quiz_api.repositories.AnswerRepository;
 import com.cooksys.quiz_api.repositories.QuestionRepository;
 import com.cooksys.quiz_api.repositories.QuizRepository;
 import com.cooksys.quiz_api.services.QuizService;
@@ -29,12 +30,20 @@ public class QuizServiceImpl implements QuizService {
 	private final QuizMapper quizMapper;
 	private final QuestionRepository questionRepository;
 	private final QuestionMapper questionMapper;
+	private final AnswerRepository answerRepository;
 	
 	private Quiz getQuiz(Long id) {
 		Optional<Quiz> optionalQuiz = quizRepository.findById(id);
 		// exception logic goes here
 		
 		return optionalQuiz.get();
+	}
+	
+	private Question getQuestion(Long id) {
+		Optional<Question> optionalQuestion = questionRepository.findById(id);
+		//exception logic goes here
+		
+		return optionalQuestion.get();
 	}
 
 	@Override
@@ -87,6 +96,22 @@ public class QuizServiceImpl implements QuizService {
 		Quiz quizToUpdate = quizRepository.getById(id);
 		quizToUpdate.setName(newName);
 		return quizMapper.entityToDto(quizRepository.saveAndFlush(quizToUpdate));
+	}
+
+	@Override  //id is quiz id
+	public QuestionResponseDto deleteQuestion(Long id, Long questionId) {
+		Quiz targetQuiz = getQuiz(id);
+		Question questionToDelete = getQuestion(questionId);
+		
+		//check to see if questions has target question here and throw exception if not
+		
+		targetQuiz.getQuestions().remove(questionToDelete);
+		quizRepository.saveAndFlush(targetQuiz);
+		answerRepository.deleteAll(questionToDelete.getAnswers());
+		questionRepository.delete(questionToDelete);
+		
+		return questionMapper.entityToDto(questionToDelete);
+		
 	}
 	
 	

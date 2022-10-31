@@ -22,4 +22,6 @@ public interface QuizService {
 
 	QuizResponseDto renameQuiz(Long id, String newName);
 
+	QuestionResponseDto deleteQuestion(Long id, Long questionId); //id is quiz id
+
 }
